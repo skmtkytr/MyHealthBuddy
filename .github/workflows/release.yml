@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       KEYSTORE_B64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
       RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
