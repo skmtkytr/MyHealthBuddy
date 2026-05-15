@@ -9,6 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      KEYSTORE_B64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+      RELEASE_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+      RELEASE_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+      RELEASE_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -25,23 +30,16 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Decode keystore (if provided)
-        if: ${{ secrets.SIGNING_KEYSTORE_BASE64 != '' }}
-        env:
-          KEYSTORE_B64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+        if: env.KEYSTORE_B64 != ''
         run: |
           mkdir -p $HOME/.signing
           echo "$KEYSTORE_B64" | base64 -d > $HOME/.signing/release.jks
-          {
-            echo "RELEASE_STORE_FILE=$HOME/.signing/release.jks"
-            echo "RELEASE_STORE_PASSWORD=${{ secrets.SIGNING_STORE_PASSWORD }}"
-            echo "RELEASE_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}"
-            echo "RELEASE_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}"
-          } >> $GITHUB_ENV
+          echo "RELEASE_STORE_FILE=$HOME/.signing/release.jks" >> $GITHUB_ENV
 
       - name: Build release APK
         run: ./gradlew :app:assembleRelease
 
-      - name: Build debug APK (fallback / always built)
+      - name: Build debug APK
         run: ./gradlew :app:assembleDebug
 
       - name: Upload APKs as workflow artifact
