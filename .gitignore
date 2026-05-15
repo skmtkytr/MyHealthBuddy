@@ -1,0 +1,30 @@
+# Build outputs
+build/
+.gradle/
+.cxx/
+captures/
+local.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Android
+*.apk
+*.aab
+*.ap_
+*.dex
+app/release/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keystore (never commit)
+*.jks
+*.keystore
+keystore.properties
+
+# Claude API key (loaded from EncryptedSharedPreferences at runtime)
+api-keys.properties
